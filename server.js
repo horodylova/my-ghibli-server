@@ -1,7 +1,8 @@
-const express = require("express");
-const path = require("path");
-const cors = require("cors");
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,6 +19,12 @@ app.get('/', (req, res) => {
     <p>API server is working correctly.</p>
   `);
 });
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something broke!' });
+});
+
 
  app.listen(PORT, () => {
   console.log(`The server is running on port ${PORT}`);
