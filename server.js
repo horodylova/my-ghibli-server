@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import { createImageRouter } from "./routes/createImage.js";
 
 dotenv.config();
 
@@ -11,7 +12,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Register the image generation route
+app.use("/api/images", createImageRouter);
 
 app.get('/', (req, res) => {
   res.send(`
@@ -25,7 +27,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something broke!' });
 });
 
-
- app.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`The server is running on port ${PORT}`);
 });
