@@ -38,7 +38,7 @@ export const createImage = async (req, res) => {
                         content: [
                             {
                                 type: "text",
-                                text: "Describe in detail what you see in this photograph. Include information about people, objects, background, colours and overall composition. Be specific and objective. Your description will be used to create a Studio Ghibli style version of this image."
+                                text: "Describe in detail what is shown in this picture. Include information about the people, give the direction they are looking, are they looking directly at the camera? What are they doing in the photo, their poses. Include the objects, the background, their colours and the overall composition. Indicate objects, special details, their colours, animals if present, their breeds, their colours. Be specific and objective. You should use the text to convey as accurately as possible everything that is depicted in the photograph and nothing more."
                             },
                             {
                                 type: "image_url",
