@@ -60,7 +60,7 @@ export const createImage = async (req, res) => {
     const base64Image = imageBuffer.toString("base64");
     
     const descriptionPrompt = `
-      Describe this photograph in extensive detail. Include:
+      Describe this photograph in extensive detail. Your photo description must fit within 2000 characters. Include:
       - Each person: appearance, race/ethnicity, gender, age range, hair style and color, clothing, facial expression, gaze direction, pose, and position
       - Background elements: setting, environment, colors, lighting
       - Any objects: position, color, size, and relevance
