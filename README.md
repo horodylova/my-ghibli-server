@@ -6,7 +6,7 @@ Technology Stack
 **Backend**: Node.js + Express
 **API**: OpenAI API for image generation
 
-Project Structure
+## Project Structure
 
 ```
 Copyghibli-image-generator/
