@@ -1,6 +1,9 @@
 ## Ghibli-Style Image Generator ##
 
 A web application for generating Studio Ghibli-style images using the OpenAI API. Users can enter a text description of a scene, and the application will create a corresponding image in Hayao Miyazaki's anime style.
+
+I also expanded the app's capabilities to generate not only Ghibli-style illustrations, but also 3D animation-style images inspired by Pixar, Disney, DreamWorks, and Illumination, offering users a broader range of visual storytelling possibilities.
+
 Technology Stack
 
 **Backend**: Node.js + Express
