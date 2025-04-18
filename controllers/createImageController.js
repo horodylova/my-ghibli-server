@@ -74,7 +74,7 @@ export const createImage = async (req, res) => {
     const visionResponse = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
-        model: "GPT-4.1",
+        model: "gpt-4o",
         messages: [
           {
             role: "user",

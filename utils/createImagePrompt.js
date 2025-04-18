@@ -1,55 +1,70 @@
 export default function createImagePrompt(options = {}) {
   const {
-    scene = '',   
+    scene = '',
     style = 'ghibli',
     mood = 'cheerful',
     detailed = true
   } = options;
   
-  const styleDetails = {
-    pixar: "Pixar-style 3D animation with detailed texturing, expressive characters, and cinematic lighting",
-    disney: "Disney-style 3D animation with fluid movement, bright colors, and expressive characters",
-    dreamworks: "DreamWorks-style 3D animation with bold character design, dramatic lighting, and cinematic composition",
-    illumination: "Illumination-style 3D animation with smooth textures, simplified forms, and vibrant colors",
-    ghibli: "Studio Ghibli-style animation with hand-drawn qualities, watercolor backgrounds, and natural movements"
+  const styleBase = {
+    pixar: "Pixar 3D animation",
+    disney: "Disney 3D animation",
+    dreamworks: "DreamWorks 3D animation",
+    illumination: "Illumination 3D animation",
+    ghibli: "Studio Ghibli 2D anime"
+  };
+
+  const styleInstructions = {
+    pixar: `
+      - Use Pixar's signature 3D style with detailed texturing
+      - Create expressive characters with exaggerated features
+      - Apply cinematic lighting with strong contrasts
+      - Use rich, slightly saturated color palette
+      - Add subtle details and textures to surfaces
+    `,
+    disney: `
+      - Use Disney's smooth 3D animation style
+      - Draw characters with big expressive eyes and animated facial features
+      - Apply magical, fantasy-like lighting effects
+      - Use vibrant, storybook color palette
+      - Make characters appear slightly more youthful
+      - Reference the style of "Frozen", "Moana", or "Tangled"
+    `,
+    dreamworks: `
+      - Apply DreamWorks' bold character design approach
+      - Use dramatic lighting and dynamic poses
+      - Create expressive facial features with exaggerated emotions
+      - Use rich, contrasting colors with dramatic shadows
+      - Reference films like "How to Train Your Dragon" or "Shrek"
+    `,
+    illumination: `
+      - Use Illumination's smooth textures and simplified forms
+      - Create characters with exaggerated expressions and rounded shapes
+      - Apply bright, vibrant colors with high saturation
+      - Add smooth, minimal shadows and high-contrast lighting
+      - Reference the style of "Despicable Me" or "The Secret Life of Pets"
+    `,
+    ghibli: `
+      - Draw with signature large Ghibli eyes and simplified noses
+      - Make characters appear more youthful and innocent
+      - Apply soft, hand-drawn linework with visible brushstrokes
+      - Use watercolor-style backgrounds with soft depth
+      - Apply pastel and earth tone palette of Miyazaki films
+      - Capture the magical, childlike wonder of Ghibli
+      - The image should look like a still from an anime film
+    `
   };
   
-  const styleDescription = styleDetails[style.toLowerCase()] || style;
+  const baseStyle = styleBase[style.toLowerCase()] || style;
+  const styleGuide = styleInstructions[style.toLowerCase()] || '';
   
-  const basePrompt = `You are an animation artist. Create a portrait of the photo whose description you received in ${styleDescription}:`;
+  let prompt = `Transform this scene into authentic ${baseStyle} with ${mood} mood.`;
   
-  const styleElements = detailed ? `
-    Apply these artistic elements:
-    - Render characters and objects in authentic ${style} animation style
-    - Apply ${mood} lighting and characteristic ${style} texturing
-    - Use a color palette typical of ${style} animation
-  ` : '';
-
-  const preservationInstructions = `
-    Important:
-    - Maintain all people, objects and their positions from the description
-    - Preserve facial expressions, ethnicities, and key details
-    - Keep the composition and setting as described
-  `;
+  if (detailed) {
+    prompt += `\nSTYLE INSTRUCTIONS:\n${styleGuide}\nMAINTAIN: Preserve all people, expressions, and key elements from the scene.`;
+  }
   
-  const technicalSpecs = `
-    Technical requirements:
-    - Create a high-quality single frame that looks like ${style} animation
-    - The image should appear as if taken from a ${style} animated production
-  `;
+  prompt += `\n\nSCENE: ${scene}`;
   
-  const prompt = `
-${basePrompt}
-
-${styleElements}
-
-${preservationInstructions}
-
-${technicalSpecs}
-
-SCENE DESCRIPTION (already analyzed): ${scene}
-`.trim();
-  
-  console.log("Final prompt:", prompt);
-  return prompt;
+  return prompt.trim();
 }
