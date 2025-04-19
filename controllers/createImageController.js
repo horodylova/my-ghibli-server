@@ -1,5 +1,5 @@
 import axios from "axios";
-import createImagePrompt from "../utils/createImagePrompt.js";
+import createImageUtils from "../utils/createImagePrompt.js";
 import dotenv from "dotenv";
 import multer from "multer";
 import fs from "fs";
@@ -7,7 +7,7 @@ import path from "path";
 
 dotenv.config();
 
-
+const { createImagePrompt, DEFAULT_STYLE, DEFAULT_MOOD } = createImageUtils;
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = 'uploads/';
@@ -18,7 +18,6 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
-
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     const ext = path.extname(file.originalname);
     cb(null, file.fieldname + '-' + uniqueSuffix + ext);
@@ -53,21 +52,34 @@ export const createImage = async (req, res) => {
     }
     
     imagePath = req.file.path;
-    const { style = 'pixar', mood = 'natural' } = req.body;
+    const { style = DEFAULT_STYLE, mood = DEFAULT_MOOD } = req.body;
     
- 
     const imageBuffer = fs.readFileSync(imagePath);
     const base64Image = imageBuffer.toString("base64");
     
     const descriptionPrompt = `
-      Describe this photograph in extensive detail. Your photo description must fit within 2000 characters. Include:
-      - Each person: appearance, race/ethnicity, gender, age range, hair style and color, clothing, facial expression, gaze direction, pose, and position
-      - Background elements: setting, environment, colors, lighting
-      - Any objects: position, color, size, and relevance
-      - Any animals: breed, color, position, and behavior
-      - Spatial relationships: how elements are positioned relative to each other
-      - Overall composition and framing
-      Be objective, specific, and thorough. Focus only on what is visibly present in the image.
+      Create a precise and factual description of this image for artistic recreation.
+      
+      Rules:
+      1. Describe ONLY what you can actually see
+      2. NEVER invent or assume details not visible in the image
+      3. Be absolutely accurate about physical characteristics
+      4. Note exact positions, poses, expressions, and spatial relationships
+      5. For complex scenes, prioritize describing main subjects first
+      
+      For any people present:
+      - Describe exact appearance (baldness/hair, facial features, body type)
+      - Specify precise age range, clothing, expression, gaze direction
+      - Note exact positioning and posture
+      
+      For backgrounds:
+      - Describe precise setting/environment with accurate colors
+      - Note lighting conditions and atmosphere
+      
+      For any animals, objects, or other elements:
+      - Describe exact appearance, position, and relationship to other elements
+      
+      Your description must be factual and under 2000 characters.
     `;
     
     console.log("Requesting image description...");
@@ -77,12 +89,19 @@ export const createImage = async (req, res) => {
         model: "gpt-4o",
         messages: [
           {
+            role: "system",
+            content: "You are a precise image analyst with forensic attention to detail. Your job is to create factual descriptions for artistic reproduction. You must never invent details, and you must describe exactly what is visible with scientific accuracy."
+          },
+          {
             role: "user",
             content: [
               { type: "text", text: descriptionPrompt },
               {
                 type: "image_url",
-                image_url: { url: `data:image/jpeg;base64,${base64Image}` }
+                image_url: { 
+                  url: `data:image/jpeg;base64,${base64Image}`,
+                  detail: "high"
+                }
               }
             ]
           }
@@ -99,7 +118,6 @@ export const createImage = async (req, res) => {
     const visionTokens = visionResponse.data.usage;
     const imageDescription = visionResponse.data.choices[0].message.content;
     
- 
     if (imageDescription.includes("cannot describe") || 
         imageDescription.includes("I'm sorry") || 
         imageDescription.includes("content guidelines") ||
@@ -111,7 +129,6 @@ export const createImage = async (req, res) => {
       });
     }
     
-
     console.log("Creating image generation prompt...");
     const prompt = createImagePrompt({
       scene: imageDescription,
@@ -151,7 +168,6 @@ export const createImage = async (req, res) => {
   } catch (error) {
     console.error("Error generating image:", error.response?.data || error.message);
     
-    
     const errorDetails = {
       message: error.message,
       statusCode: error.response?.status,
@@ -164,7 +180,6 @@ export const createImage = async (req, res) => {
       details: errorDetails
     });
   } finally {
-  
     if (imagePath && fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
     }
