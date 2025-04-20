@@ -74,7 +74,10 @@ function createImagePrompt(options = {}) {
   const moodValue = AVAILABLE_MOODS[mood.toLowerCase()] || mood;
   const styleGuide = styleInstructions[style.toLowerCase()] || '';
 
-  let prompt = `Transform this scene into authentic ${baseStyle} with $ with ${moodValue} mood.`;
+  let prompt = `Recreate this scene as an authentic ${baseStyle} illustration with a ${moodValue} mood. 
+Do not add, remove, or change any people, objects, or features from the original scene. 
+The generated image must be an exact artistic recreation of the original photo, only changing the visual style. 
+Do not invent or imagine anything that is not present in the original.`;
 
   if (detailed) {
     prompt += `\nSTYLE INSTRUCTIONS:\n${styleGuide}\nMAINTAIN: Preserve all people, expressions, and key elements from the scene.`;

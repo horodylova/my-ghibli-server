@@ -12,7 +12,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Register the image generation route
 app.use("/api/images", createImageRouter);
 
 app.get('/', (req, res) => {
